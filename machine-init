@@ -1,5 +1,25 @@
 #!/bin/sh
 
-if [ -f "/etc/motd" ]; then
-    rm -rf /etc/motd
+HOST_HOME=$1
+NEWIP=$2
+
+task() {
+    echo "==> $@"
+}
+
+toolboxdir="/var/lib/boot2docker/docker-machine-toolbox"
+
+if [ -d "$toolboxdir" ]; then
+    rm -rf $toolboxdir
 fi
+
+# Install docker-machine-toolbox
+task "Clone docker-machine-toolbox to $toolboxdir"
+git clone -q https://github.com/seandou/docker-machine-toolbox.git $toolboxdir
+
+task "Install toolbox"
+cd $toolboxdir
+./boot
+
+task "Set ip to $NEWIP"
+/usr/bin/bootsync-gen $NEWIP >> /dev/null

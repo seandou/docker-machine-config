@@ -3,9 +3,22 @@
 NAME=$1
 
 if [ -z "$NAME" ]; then
-  NAME="default"
+    NAME="default"
+fi
+
+# Set machine ip
+read -p "Enter ip: " newip
+
+if [ -z "$newip" ]; then
+    newip="192.168.99.100"
 fi
 
 docker-machine ssh $NAME \
-  HOST_HOME=$HOME \
-  'sudo sh -s' < machine-init
+    'sudo sh -s' \
+    -- < machine-init \
+    $HOME $newip
+
+echo '==> Restart and regenerate certs'
+docker-machine restart $NAME
+docker-machine regenerate-certs -f $NAME
+
