@@ -13,12 +13,16 @@ if [ -z "$newip" ]; then
     newip="192.168.99.100"
 fi
 
+# Initialize docker machine
 docker-machine ssh $NAME \
     'sudo sh -s' \
     -- < machine-init \
     $HOME $newip
 
-echo '==> Restart and regenerate certs'
+# Restart and regenerate certs
+echo "==> Restart $NAME ..."
 docker-machine restart $NAME
+
+echo "==> Regenerate certs ..."
 docker-machine regenerate-certs -f $NAME
 

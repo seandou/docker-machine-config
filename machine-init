@@ -3,23 +3,26 @@
 HOST_HOME=$1
 NEWIP=$2
 
+toolboxdir="/var/lib/boot2docker/docker-machine-toolbox"
+
 task() {
     echo "==> $@"
 }
 
-toolboxdir="/var/lib/boot2docker/docker-machine-toolbox"
-
+# Clean old files
 if [ -d "$toolboxdir" ]; then
     rm -rf $toolboxdir
 fi
 
-# Install docker-machine-toolbox
+# Install toolbox
 task "Clone docker-machine-toolbox to $toolboxdir"
 git clone -q https://github.com/seandou/docker-machine-toolbox.git $toolboxdir
 
-task "Install toolbox"
+# Boot with init scripts
+task "Initialize docker machine"
 cd $toolboxdir
 ./boot
 
+# Set new ip
 task "Set ip to $NEWIP"
 /usr/bin/bootsync-gen $NEWIP >> /dev/null
